@@ -3,9 +3,10 @@ html(lang=en)
     head
         title The Useless Github app
         link(rel='stylesheet' href='/build.css')
+        link(href='http://fonts.googleapis.com/css?family=Lato:300,400,700' rel='stylesheet' type='text/css')
     body
-        article#repository-list
-            h1 Repositories
+        section#repository-list
+            h1 THE USELESS GITHUB APP
             ul
-                li(v-repeat='repos', v-text='name')
+                li(v-repeat='repos' v-component='repository-vue')
         script(src='/build.js')

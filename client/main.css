@@ -1,0 +1,40 @@
+body {
+    font-family: 'Lato', sans-serif;
+    font-weight: 300;
+    color: #222;
+    padding-left: 5em;
+    padding-right: 5em;
+    background: #f5f5f5;
+}
+
+h1 {
+    font-weight: 300;
+    text-align: center;
+    font-size: 4em;
+    text-decoration: line-through;
+    padding-bottom: 0.6em;
+    border-bottom: 1px solid #ddd;
+}
+
+li {
+    list-style: none;
+}
+
+article {
+    width: 300px;
+    float: left;
+    background: white;
+    padding: 1em;
+    border: 1px solid #f5f5f5;
+}
+
+canvas {
+    background: #fcfcfc;
+    width: 300px;
+    height: 300px;
+}
+
+header {
+    text-align: center;
+    padding: 0.8em;
+}

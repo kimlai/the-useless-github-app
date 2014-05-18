@@ -1,0 +1,10 @@
+{
+  "name": "repository-vue",
+  "dependencies": {
+    "component/cookie": "^1.0.1",
+    "visionmedia/superagent": "~0.18.0",
+    "jdan/isomer": "~0.2.4"
+  },
+  "scripts": ["repository-vue.js"],
+  "templates": ["repository-vue.html"]
+}
