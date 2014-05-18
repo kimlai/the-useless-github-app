@@ -1,0 +1,13 @@
+{
+  "name": "The Useless Github app",
+  "dependencies": {
+    "necolas/normalize.css": "^3.0.0",
+    "yyx990803/vue": "~0.10.4",
+    "marcuswestin/store.js": "^1.3.16",
+    "visionmedia/superagent": "~0.18.0",
+    "component/cookie": "^1.0.1"
+  },
+  "scripts": [
+    "client/main.js"
+  ]
+}

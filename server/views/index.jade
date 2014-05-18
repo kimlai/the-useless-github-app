@@ -1,0 +1,11 @@
+doctype html
+html(lang=en)
+    head
+        title The Useless Github app
+        link(rel='stylesheet' href='/build.css')
+    body
+        article#repository-list
+            h1 Repositories
+            ul
+                li(v-repeat='repos', v-text='name')
+        script(src='/build.js')
