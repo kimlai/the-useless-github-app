@@ -7,6 +7,7 @@ html(lang=en)
     body
         section#repository-list
             h1 THE USELESS GITHUB APP
+            div(v-on='click: toggleLabels') labels
             ul
                 li(v-repeat='repos' v-component='repository-vue')
         script(src='/build.js')

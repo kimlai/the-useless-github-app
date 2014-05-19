@@ -32,6 +32,9 @@ var reposView = new Vue({
                         return -repo.open_issues_count;
                     });
                 });
+        },
+        toggleLabels: function () {
+            this.$broadcast('toggle-labels');
         }
     }
 });
