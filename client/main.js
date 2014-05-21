@@ -35,6 +35,9 @@ var reposView = new Vue({
         },
         toggleLabels: function () {
             this.$broadcast('toggle-labels');
+        },
+        togglePullRequests: function () {
+            this.$broadcast('toggle-pull-requests');
         }
     }
 });
