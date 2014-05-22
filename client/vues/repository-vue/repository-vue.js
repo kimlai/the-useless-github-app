@@ -53,12 +53,19 @@ var repositoryVue = {
                 .set('Authorization', 'token ' + token)
                 .end(function (res) {
                     _.each(res.body, function (pullRequest) {
+                        var totalBuildTime = 0;
+                        var succesfulBuildsCount = 0;
                         request
                             .get(pullRequest._links.statuses.href)
                             .set('Accept', 'application/vnd.github.v3+json')
                             .set('Authorization', 'token ' + token)
                             .end(function (res) {
                                 pullRequest.status = _.first(res.body);
+                                if (pullRequest.status && pullRequest.status.state === 'success') {
+                                    succesfulBuildsCount++;
+                                    totalBuildTime += _this.computeBuildTime(res.body);
+                                    _this.$data.averageBuildTime = totalBuildTime / succesfulBuildsCount;
+                                }
                             });
                     });
                     _this.$data.pullRequests = res.body.reverse();
@@ -83,7 +90,7 @@ var repositoryVue = {
                 var issue = this.$data.issues[i];
                 color = this.getIssueColor(issue);
                 var placement = availablePlacements[i % 9];
-                this.drawSingleCube(placement[0], placement[1], z, 0.5, color);
+                this.drawSingleCube(placement[0], placement[1], z, 1, 0.5, color);
             }
         },
         drawPullRequests: function() {
@@ -101,16 +108,21 @@ var repositoryVue = {
                 [0, 0],
             ];
             for (var i=0; i < this.$data.pullRequests.length; i++) {
-                z = Math.floor(i/9);
                 var pullRequest = this.$data.pullRequests[i];
-                color = this.getPullRequestColor(pullRequest);
+                var z = Math.floor(i/9);
+                var height = 1;
+                var color = this.getPullRequestColor(pullRequest);
                 var placement = availablePlacements[i % 9];
-                this.drawSingleCube(placement[0], placement[1], z, 1, color);
+                if (pullRequest.status && pullRequest.status.state === 'pending') {
+                    var elapsedTime = new Date() - new Date(pullRequest.status.created_at);
+                    height = Math.min(elapsedTime / this.$data.averageBuildTime, 1);
+                }
+                this.drawSingleCube(placement[0], placement[1], z, height, 1, color);
             }
         },
-        drawSingleCube: function(x, y, z, scale, color) {
+        drawSingleCube: function(x, y, z, height, scale, color) {
             var isomer = new Isomer(this.$el.getElementsByTagName('canvas')[0]);
-            isomer.add(Prism(new Point(x*1.15, y*1.15, z*1.15)).scale(Point.ORIGIN, scale, scale, scale), color);
+            isomer.add(Prism(new Point(x*1.15, y*1.15, z*1.15)).scale(Point.ORIGIN, scale, scale, scale * height), color);
         },
         computeLabelColor: function (label) {
             var rgba = colorParser('#' + label.color);
@@ -141,22 +153,26 @@ var repositoryVue = {
         },
         getPullRequestColor: function (pullRequest) {
             if (pullRequest.status === undefined) {
-                console.log('blanc');
                 return  white;
             }
             if (pullRequest.status.state === 'pending') {
-                console.log('jaune');
                 return yellow;
             }
             if (pullRequest.status.state === 'failure') {
-                console.log('rouge');
                 return red;
             }
             if (pullRequest.status.state === 'success') {
-                console.log('vert');
                 return green;
             }
 
+        },
+        computeBuildTime: function (statuses) {
+            for (var i=0; i < statuses.length; i++) {
+                var status = statuses[i];
+                if (status.state === 'success') {
+                    return new Date(status.created_at) - new Date(statuses[i+1].created_at);
+                }
+            }
         }
     }
 };
