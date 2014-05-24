@@ -52,7 +52,8 @@ var repositoryVue = {
                 .set('Accept', 'application/vnd.github.v3+json')
                 .set('Authorization', 'token ' + token)
                 .end(function (res) {
-                    _.each(res.body, function (pullRequest) {
+                    var pullRequests = res.body.reverse();
+                    _.each(pullRequests, function (pullRequest) {
                         var totalBuildTime = 0;
                         var succesfulBuildsCount = 0;
                         request
@@ -67,8 +68,11 @@ var repositoryVue = {
                                     _this.$data.averageBuildTime = totalBuildTime / succesfulBuildsCount;
                                 }
                             });
+                        _this.drawPullRequests();
                     });
-                    _this.$data.pullRequests = res.body.reverse();
+                    _this.$data.pullRequests = pullRequests;
+                    var fetch = _.bind(_this.fetchPullRequests, _this);
+                    _.delay(fetch, 5000);
                 });
         },
         drawIssues: function() {
