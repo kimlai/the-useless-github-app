@@ -15,9 +15,11 @@
       "client/main.css"
   ],
   "paths": [
-    "client/vues"
+    "client/vues",
+    "client/models"
   ],
   "local": [
-    "repository-vue"
+    "repository-vue",
+    "repository"
   ]
 }

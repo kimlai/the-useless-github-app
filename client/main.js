@@ -4,6 +4,7 @@ var request = require('superagent');
 var store = require('store');
 var _ = require('underscore');
 var repositoryVue = require('repository-vue');
+var Repository = require('repository');
 
 var token = cookie('token');
 
@@ -28,8 +29,9 @@ var reposView = new Vue({
                 .set('Accept', 'application/vnd.github.v3+json')
                 .set('Authorization', 'token ' + token)
                 .end(function (res) {
-                    _this.repos = _.where(res.body, { has_issues: true }).sort(function (repo) {
-                        return -repo.open_issues_count;
+                    var repos = _.where(res.body, { has_issues: true });
+                    _.each(repos, function (repo) {
+                        _this.repos.push(new Repository(repo));
                     });
                 });
         },

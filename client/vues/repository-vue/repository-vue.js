@@ -1,12 +1,8 @@
-var cookie = require('cookie');
-var request = require('superagent');
 var Isomer = require('isomer');
 var colorParser = require('color-parser');
 var Color = require('color');
 var _ = require('underscore');
 var template = require('./repository-vue.html');
-
-var token = cookie('token');
 
 var Prism = Isomer.Shape.Prism;
 var Point = Isomer.Point;
@@ -20,10 +16,6 @@ var repositoryVue = {
     created: function() {
         this.displayLabels = false;
         this.displayPullRequests = false;
-        this.$data.issues = [];
-        this.$data.pullRequests = [];
-        this.fetchIssues();
-        this.fetchPullRequests();
         this.$watch('issues', this.drawIssues);
         this.$on('toggle-labels', function () {
             this.displayLabels = !this.displayLabels;
@@ -33,48 +25,10 @@ var repositoryVue = {
             this.displayPullRequets = !this.displayPullRequets;
             this.drawPullRequests();
         });
+        this.$data.fetchIssues();
+        this.$data.fetchPullRequests();
     },
     methods: {
-        fetchIssues: function () {
-            var _this = this;
-            request
-                .get('https://api.github.com/repos/' + _this.$data.full_name + '/issues?per_page=150')
-                .set('Accept', 'application/vnd.github.v3+json')
-                .set('Authorization', 'token ' + token)
-                .end(function (res) {
-                    _this.$data.issues = res.body.reverse();
-                });
-        },
-        fetchPullRequests: function () {
-            var _this = this;
-            request
-                .get('https://api.github.com/repos/' + _this.$data.full_name + '/pulls?per_page=150')
-                .set('Accept', 'application/vnd.github.v3+json')
-                .set('Authorization', 'token ' + token)
-                .end(function (res) {
-                    var pullRequests = res.body.reverse();
-                    _.each(pullRequests, function (pullRequest) {
-                        var totalBuildTime = 0;
-                        var succesfulBuildsCount = 0;
-                        request
-                            .get(pullRequest._links.statuses.href)
-                            .set('Accept', 'application/vnd.github.v3+json')
-                            .set('Authorization', 'token ' + token)
-                            .end(function (res) {
-                                pullRequest.status = _.first(res.body);
-                                if (pullRequest.status && pullRequest.status.state === 'success') {
-                                    succesfulBuildsCount++;
-                                    totalBuildTime += _this.computeBuildTime(res.body);
-                                    _this.$data.averageBuildTime = totalBuildTime / succesfulBuildsCount;
-                                }
-                            });
-                        _this.drawPullRequests();
-                    });
-                    _this.$data.pullRequests = pullRequests;
-                    var fetch = _.bind(_this.fetchPullRequests, _this);
-                    _.delay(fetch, 5000);
-                });
-        },
         drawIssues: function() {
             var isomer = new Isomer(this.$el.getElementsByTagName('canvas')[0]);
             isomer.canvas.clear();
@@ -169,14 +123,6 @@ var repositoryVue = {
                 return green;
             }
 
-        },
-        computeBuildTime: function (statuses) {
-            for (var i=0; i < statuses.length; i++) {
-                var status = statuses[i];
-                if (status.state === 'success') {
-                    return new Date(status.created_at) - new Date(statuses[i+1].created_at);
-                }
-            }
         }
     }
 };

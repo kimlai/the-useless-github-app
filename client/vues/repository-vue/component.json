@@ -1,8 +1,6 @@
 {
   "name": "repository-vue",
   "dependencies": {
-    "component/cookie": "^1.0.1",
-    "visionmedia/superagent": "~0.18.0",
     "jdan/isomer": "~0.2.4",
     "component/color-parser": "~0.1.0",
     "components/underscore": "^1.5.2",
