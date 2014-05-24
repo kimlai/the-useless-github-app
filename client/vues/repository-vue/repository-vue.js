@@ -113,7 +113,7 @@ var repositoryVue = {
                 var height = 1;
                 var color = this.getPullRequestColor(pullRequest);
                 var placement = availablePlacements[i % 9];
-                if (pullRequest.status && pullRequest.status.state === 'pending') {
+                if (pullRequest.status && pullRequest.status.state === 'pending' && pullRequest.status.description.indexOf('started') !== -1) {
                     var elapsedTime = new Date() - new Date(pullRequest.status.created_at);
                     height = Math.min(elapsedTime / this.$data.averageBuildTime, 1);
                 }
